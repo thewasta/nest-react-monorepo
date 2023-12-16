@@ -4,7 +4,7 @@ import {TasksService} from "../tasks.service";
 @Schema({
     timestamps: true
 })
-class Task {
+export class Task {
     @Prop({
         unique: true,
         required: true,

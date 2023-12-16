@@ -1,5 +1,4 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import {TasksService} from "../tasks.service";
 
 @Schema({
     timestamps: true
@@ -19,7 +18,8 @@ export class Task {
     description: string
 
     @Prop({
-        required: true
+        required: true,
+        default: false
     })
     done: boolean
 }

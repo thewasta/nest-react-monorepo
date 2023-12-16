@@ -1,5 +1,6 @@
 import {ChangeEvent, FormEvent, useState} from "react";
 import * as React from "react";
+import {createTaskRequest, Task} from "../api/task.ts";
 
 function TaskForm() {
     const [task, setTask] = useState({
@@ -15,9 +16,11 @@ function TaskForm() {
         })
     }
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<Task> => {
         e.preventDefault();
-        console.log(task)
+        const res = await createTaskRequest(task);
+        console.log(res)
+        return res;
     }
     return (
         <div>

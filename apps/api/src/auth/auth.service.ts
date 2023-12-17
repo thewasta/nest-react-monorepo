@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from '@nestjs/common';
+import {BadRequestException, Injectable, UnauthorizedException} from '@nestjs/common';
 import {PrismaService} from "../prisma/prisma.service";
 import {AuthDto} from "./dto/auth.dto";
 import * as bcrypt from 'bcrypt';
@@ -28,7 +28,18 @@ export class AuthService {
         return {message: 'Signup success', hashed: hashedPassword}
     }
 
-    async signin() {
+    async signin(dto: AuthDto) {
+        const foundUser = await this.prisma.user.findUnique({
+            where: {
+                email: dto.email
+            }
+        })
+
+        if (!foundUser) {
+            throw new BadRequestException('User not found');
+        }
+
+        await this.comparePassword(foundUser.hashedPassword, dto.password)
         return {message: 'signin success'}
     }
 
@@ -39,5 +50,12 @@ export class AuthService {
     async hashPassword(password: string) {
         const saltOrRound = 10;
         return await bcrypt.hash(password, saltOrRound);
+    }
+
+    async comparePassword(hashed: string, plainPassword: string): Promise<void> {
+        const isMatch = await bcrypt.compare(plainPassword, hashed);
+        if (!isMatch) {
+            throw new UnauthorizedException('Email or password wrong')
+        }
     }
 }

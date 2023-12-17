@@ -1,14 +1,17 @@
 import React, {createContext, useEffect, useState} from "react";
-import {createTask, createTaskRequest, getAllTaskRequest, Task} from "../api/task.ts";
+import {createTask, createTaskRequest, deleteTaskRequest, getAllTaskRequest, Task} from "../api/task.ts";
 
 interface TaskContext {
     tasks: Task[],
-    createTask: (task: createTask) => void
+    createTask: (task: createTask) => Promise<void>,
+    deleteTask: (taskId: string) => Promise<void>
 }
 
 export const taskContext = createContext<TaskContext>({
     tasks: [],
-    createTask: () => {
+    createTask: async () => {
+    },
+    deleteTask: async () => {
     }
 });
 
@@ -29,11 +32,19 @@ export const TaskProvider: React.FC<Props> = ({children}) => {
         const json = await res.json()
         setTasks([...tasks, json])
     }
+
+    const deleteTask = async (taskId: string): Promise<void> => {
+        const res = await deleteTaskRequest(taskId);
+        if (res.status === 204) {
+            setTasks(tasks.filter((task) => task._id !== taskId));
+        }
+    }
     return (
         <taskContext.Provider value={
             {
                 tasks,
-                createTask
+                createTask,
+                deleteTask
             }
         }>
             {children}

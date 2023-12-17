@@ -22,4 +22,10 @@ export const createTaskRequest = (task: createTask): Promise<any> => {
     });
 }
 
+export const deleteTaskRequest = (taskId: string): Promise<any> => {
+    return fetch(`${API_URL}/tasks/${taskId}`, {
+        method: 'DELETE',
+    })
+}
+
 export const getAllTaskRequest = () => fetch(`${API_URL}/tasks`);

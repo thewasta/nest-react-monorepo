@@ -1,0 +1,22 @@
+version: "3.8"
+name: "nest-react-monorepo"
+services:
+  mongo:
+    build:
+      dockerfile: Dockerfile
+      args:
+        MONGO_VERSION: 4
+    environment:
+      MONGO_INITDB_DATABASE: auth
+      MONGO_REPLICA_HOST: localhost
+      MONGO_REPLICA_PORT: 27017
+      MONGO_COMMAND: 'mongo'
+    ports:
+      - '27017:27017'
+    restart: unless-stopped
+    healthcheck:
+      # Use "mongo" instead of "mongosh" before v5.0
+      test: [ 'CMD', 'mongo', 'admin', '--port', '27018', '--eval', "db.adminCommand('ping').ok" ]
+      interval: 5s
+      timeout: 2s
+      retries: 20

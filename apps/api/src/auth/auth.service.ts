@@ -2,10 +2,14 @@ import {BadRequestException, Injectable, UnauthorizedException} from '@nestjs/co
 import {PrismaService} from "../prisma/prisma.service";
 import {AuthDto} from "./dto/auth.dto";
 import * as bcrypt from 'bcrypt';
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService) {
+    constructor(
+        private prisma: PrismaService,
+        private jwtService: JwtService
+    ) {
     }
 
     async signup(dto: AuthDto) {
@@ -40,7 +44,14 @@ export class AuthService {
         }
 
         await this.comparePassword(foundUser.hashedPassword, dto.password)
-        return {message: 'signin success'}
+        const payload = {
+            sub: dto.email
+        }
+
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+            expires_in: '1h'
+        }
     }
 
     async signout() {

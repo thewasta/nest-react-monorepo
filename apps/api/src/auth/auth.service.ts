@@ -3,6 +3,7 @@ import {PrismaService} from "../prisma/prisma.service";
 import {AuthDto} from "./dto/auth.dto";
 import * as bcrypt from 'bcrypt';
 import {JwtService} from "@nestjs/jwt";
+import {Response} from "express";
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
         return {message: 'Signup success', hashed: hashedPassword}
     }
 
-    async signin(dto: AuthDto) {
+    async signin(dto: AuthDto, res: Response) {
         const foundUser = await this.prisma.user.findUnique({
             where: {
                 email: dto.email
@@ -48,10 +49,9 @@ export class AuthService {
             sub: dto.email
         }
 
-        return {
-            access_token: await this.jwtService.signAsync(payload),
-            expires_in: '1h'
-        }
+        let accessToken = await this.jwtService.signAsync(payload);
+        res.cookie('token', accessToken)
+        return res.send({message: 'User sign in successfully'})
     }
 
     async signout() {

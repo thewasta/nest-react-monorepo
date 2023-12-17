@@ -1,15 +1,9 @@
-import {useEffect, useState} from "react";
-import {getAllTaskRequest, Task} from "../api/task.ts";
+
 import TaskItem from "./TaskItem.tsx";
+import {useTasks} from "../context/useTasks.tsx";
 
 function TaskList() {
-    const [tasks, setState] = useState<Task[]>([])
-    useEffect(() => {
-        getAllTaskRequest()
-            .then((response) => response.json())
-            .then(setState);
-    }, []);
-
+    const {tasks} = useTasks()
     return (
         <div>
             {

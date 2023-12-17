@@ -9,7 +9,7 @@ export interface Task {
     updatedAt: string
 }
 
-type createTask = Omit<Task, '_id' | 'createdAt' | 'updatedAt'>
+export type createTask = Omit<Task, '_id' | 'createdAt' | 'updatedAt'>
 
 
 export const createTaskRequest = (task: createTask): Promise<any> => {

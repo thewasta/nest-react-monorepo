@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, Param, Post, Put} from '@nestjs/common';
 import {TasksService} from "../tasks.service";
 import {CreateTaskDto} from "../dto/createTask.dto";
 import {UpdateTaskDto} from "../dto/updateTask.dto";
@@ -46,6 +46,7 @@ export class TasksController {
     }
 
     @Delete(':id')
+    @HttpCode(204)
     async delete(@Param('id') id: string) {
         try {
             const deletedTask = await this.taskService.delete(id);

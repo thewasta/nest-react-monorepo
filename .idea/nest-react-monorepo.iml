@@ -8,7 +8,6 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/api/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/api/dist" />
       <excludeFolder url="file://$MODULE_DIR$/apps/client/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/client/dist" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>

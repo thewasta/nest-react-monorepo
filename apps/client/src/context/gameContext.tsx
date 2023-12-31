@@ -1,4 +1,5 @@
-import React, {Context, createContext, useState} from "react";
+import React, {Context, createContext, useContext, useState} from "react";
+import {WebSocketContext} from "./socketContext.tsx";
 
 interface GameStats {
     totalGames: number;
@@ -13,7 +14,7 @@ interface PlayerInformation {
 }
 
 export interface contextProp {
-    updateState: (finding: boolean, playing: boolean) => Promise<void>;
+    updateState: (finding: boolean, playing: boolean, playerId: string) => Promise<void>;
     data: PlayerInformation;
 }
 
@@ -37,6 +38,8 @@ interface Props {
 }
 
 export const GameProvider: React.FC<Props> = ({children}) => {
+    const socket = useContext(WebSocketContext);
+
     const [playerInformation, setPlayerInformation] = useState<PlayerInformation>({
         findingGame: false,
         playing: false,
@@ -47,7 +50,9 @@ export const GameProvider: React.FC<Props> = ({children}) => {
         }
     });
 
-    const findingGame = async (): Promise<void> => {
+    const findingGame = async (playerId: string): Promise<void> => {
+        socket.emit("finding game", playerId)
+
         return new Promise(resolve => {
             setTimeout(() => {
                 setPlayerInformation({
@@ -60,7 +65,8 @@ export const GameProvider: React.FC<Props> = ({children}) => {
         });
     }
 
-    const startGame = async (): Promise<void> => {
+    const startGame = async (playerOneId: string, playerTwoId: string): Promise<void> => {
+        socket.emit("start game", playerOneId, playerTwoId);
         return new Promise(resolve => {
             setTimeout(() => {
                 setPlayerInformation({
@@ -72,7 +78,9 @@ export const GameProvider: React.FC<Props> = ({children}) => {
             }, 300)
         })
     }
-    const updateState = async (finding: boolean, playing: boolean,): Promise<void> => {
+    const updateState = async (finding: boolean, playing: boolean,playerId: string): Promise<void> => {
+        socket.emit("finding game", playerId)
+
         return new Promise(resolve => {
             setTimeout(() => {
                 setPlayerInformation({

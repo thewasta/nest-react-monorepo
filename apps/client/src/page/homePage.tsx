@@ -1,20 +1,32 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useGame} from "../context/useGame.tsx";
-import {useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
+import {WebSocketContext} from "../context/socketContext.tsx";
 
 function HomePage() {
+    const socket = useContext(WebSocketContext);
+    const [totalPlayers, setTotalPlayers] = useState<number>(0)
+    const [playerId, setPlayerId] = useState<string>("")
+    useEffect(() => {
+        socket.on('total-user', (msg) => {
+            setTotalPlayers(msg)
+        });
+        socket.on('welcome', (msg) => {
+            setPlayerId(msg.playerId);
+        });
+    }, []);
     const navigate = useNavigate();
     const wins: number = 3;
     const totalGame: number = 5;
     const {data, updateState} = useGame();
     const handleClick = async () => {
-        await updateState(true, false);
-        await updateState(false, true);
+        await updateState(true, false, playerId);
+        await updateState(false, true, playerId);
     }
 
     useEffect(() => {
         if (data.playing) {
-            updateState(false,true)
+            updateState(false,true, playerId)
                 .then(_ => {
                     navigate('playing');
                 })
@@ -25,6 +37,8 @@ function HomePage() {
             <div className="flex flex-col h-screen items-center justify-center bg-gray-100 p-4">
                 <header className="flex flex-col items-center w-full md:w-1/2 lg:w-1/3">
                     <h1 className="text-4xl font-bold mb-4">Piedra Papel y Tijeras</h1>
+                    <h2>Tu id: {playerId}</h2>
+                    <h3>Jugadores en línea {totalPlayers || 0}</h3>
                 </header>
                 <main className="flex flex-col items-center w-full md:w-1/2 lg:w-1/3 mt-10">
                     <div className="flex flex-col justify-center gap-4 mb-8 shadow-md border-2 p-5 w-full">

@@ -1,11 +1,8 @@
 import InGameSelection from "../components/inGameSelection.tsx";
-import {useGame} from "../context/useGame.tsx";
 
 function PlayingGame() {
-    const {updateState} = useGame();
     const isMe = true;
     const handleClick = async () => {
-        await updateState(false,false);
     }
     return (
         <div className="p-10 flex justify-evenly h-screen items-center">

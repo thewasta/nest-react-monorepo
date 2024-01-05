@@ -1,37 +1,38 @@
 import {Link, useNavigate} from "react-router-dom";
-import {useGame} from "../context/useGame.tsx";
-import {useContext, useEffect, useState} from "react";
-import {WebSocketContext} from "../context/socketContext.tsx";
+import {useCallback, useEffect, useState} from "react";
+import {useSocket} from "../context/socketContext.tsx";
+import {useCookies} from "react-cookie";
 
 function HomePage() {
-    const socket = useContext(WebSocketContext);
-    const [totalPlayers, setTotalPlayers] = useState<number>(0)
+    const [cookie] = useCookies(["rps-game"]);
+    const {socket, totalPlayers} = useSocket();
+    const [isCurrentlyPlaying, setisCurrentlyPlaying] = useState<boolean>(false);
     const [playerId, setPlayerId] = useState<string>("")
-    useEffect(() => {
-        socket.on('total-user', (msg) => {
-            setTotalPlayers(msg)
-        });
-        socket.on('welcome', (msg) => {
-            setPlayerId(msg.playerId);
-        });
-    }, []);
     const navigate = useNavigate();
     const wins: number = 3;
     const totalGame: number = 5;
-    const {data, updateState} = useGame();
-    const handleClick = async () => {
-        await updateState(true, false, playerId);
-        await updateState(false, true, playerId);
-    }
+    const {joinGame} = useSocket();
+    socket.on('welcome', (msg: { playerId: string }) => {
+        setPlayerId(msg.playerId);
+    });
 
+    const updatePlayerCurrentGame = useCallback((gameId: string) => {
+
+    }, []);
+    const handleClick = async () => {
+        joinGame(cookie["rps-game"]);
+    }
     useEffect(() => {
-        if (data.playing) {
-            updateState(false,true, playerId)
-                .then(_ => {
-                    navigate('playing');
-                })
+        const handleJoinedRoom = () => {
+            setisCurrentlyPlaying(true);
+            navigate('playing');
+        };
+        socket.on("joined room", handleJoinedRoom);
+
+        return () => {
+            socket.off('joined room', handleJoinedRoom)
         }
-    }, [data.playing, navigate]);
+    }, []);
     return (
         <>
             <div className="flex flex-col h-screen items-center justify-center bg-gray-100 p-4">
@@ -72,7 +73,7 @@ function HomePage() {
                             Nueva partida
                         </button>
                     </div>
-                    {data?.findingGame === true ? (<div role="status">
+                    {isCurrentlyPlaying ? (<div role="status">
                         <svg aria-hidden="true"
                              className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
                              viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

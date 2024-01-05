@@ -2,33 +2,15 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import {BrowserRouter} from 'react-router-dom'
-import {GameProvider} from "./context/gameContext.tsx";
-import {socket, WebSocketProvider} from "./context/socketContext.tsx";
-import {CookiesProvider, useCookies} from "react-cookie";
-
-
-function GameCookieProvider({children}: { children: JSX.Element }) {
-    const [cookie, setCookie] = useCookies(['rps-game']);
-
-    if (!cookie["rps-game"]) {
-        setCookie('rps-game', crypto.randomUUID());
-    }
-
-    return (
-        <CookiesProvider>
-            {children}
-        </CookiesProvider>
-    );
-}
+import {SocketProvider} from "./context/socketContext.tsx";
+import {CookiesProvider} from "react-cookie";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <BrowserRouter>
-        <GameCookieProvider>
-            <WebSocketProvider value={socket}>
-                <GameProvider>
+    <CookiesProvider>
+        <BrowserRouter>
+            <SocketProvider>
                     <App/>
-                </GameProvider>
-            </WebSocketProvider>
-        </GameCookieProvider>
-    </BrowserRouter>
+            </SocketProvider>
+        </BrowserRouter>
+    </CookiesProvider>
 )

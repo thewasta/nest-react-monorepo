@@ -1,0 +1,29 @@
+{
+  "gameId": "UUID",
+  "startedBy": "PLAYER_UUID",
+  "playerOne": "UUID",
+  "playerTwo": "UUID",
+  "won": "PLAYER_UUID",
+  "rounds": [
+    {
+      "round": 1,
+      "playerOne": "ROCK",
+      "playerTwo": "PAPER",
+      "winner": "PLAYER_TWO_UUID"
+    },
+    {
+      "round": 2,
+      "playerOne": "PAPER",
+      "playerTwo": "ROCK",
+      "winner": "PLAYER_ONE_UUID"
+    },
+    {
+      "round": 3,
+      "playerOne": "ROCK",
+      "playerTwo": "PAPER",
+      "winner": "PLAYER_TWO_UUID"
+    }
+  ],
+  "isFinished": true,
+  "isPlaying": false
+}
